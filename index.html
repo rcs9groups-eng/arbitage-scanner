@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Real Strategy Indicator - Live Profit Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #00ff88;
+            --secondary: #00b8ff;
+            --accent: #ff6b00;
+            --dark: #0a0a0a;
+            --dark-light: #1a1a1a;
+            --text: #ffffff;
+            --danger: #ff4444;
+            --warning: #ffaa00;
+            --success: #00ff88;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark), #1a1a2a);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 15px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--dark-light), #2d2d2d);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 2px solid var(--primary);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .live-badge {
+            background: var(--primary);
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            animation: pulse 1s infinite;
+            display: inline-block;
+            font-weight: bold;
+            margin-left: 10px;
+            font-size: 0.8em;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        /* Strategy Cards */
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .strategy-card {
+            background: linear-gradient(135deg, var(--dark-light), #2d2d2d);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .strategy-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .strategy-card.active {
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .strategy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .strategy-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .risk-badge {
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .risk-low { background: var(--success); color: #000; }
+        .risk-medium { background: var(--warning); color: #000; }
+        .risk-high { background: var(--danger); color: white; }
+
+        .profit-range {
+            color: var(--success);
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* Calculator Section */
+        .calculator-card {
+            background: linear-gradient(135deg, var(--dark-light), #2d2d2d);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #333;
+            margin: 20px 0;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: var(--dark-light);
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--primary), #00cc6a);
+            color: #000;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 255, 136, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary), #0099cc);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 184, 255, 0.2);
+        }
+
+        /* Results */
+        .result-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .profit-display {
+            background: linear-gradient(135deg, var(--success), #00cc6a);
+            color: #000;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.3em;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .loss-display {
+            background: linear-gradient(135deg, var(--danger), #cc0000);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.3em;
+            box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+        }
+
+        /* Progress Bars */
+        .progress-container {
+            margin: 15px 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 5px;
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+
+        /* Strategy Details */
+        .strategy-details {
+            background: rgba(0, 184, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--secondary);
+        }
+
+        /* History */
+        .history-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid var(--secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .strategy-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>🎯 REAL STRATEGY INDICATOR <span class="live-badge">LIVE PROFIT CALCULATOR</span></h1>
+            <p>10 Proven Strategies • Real Calculations • Zero Risk Arbitrage</p>
+        </div>
+
+        <!-- STRATEGY SELECTION -->
+        <div class="calculator-card">
+            <h2><i class="fas fa-chess-queen"></i> SELECT YOUR STRATEGY</h2>
+            <p>Choose a strategy based on your experience level and profit goals</p>
+            
+            <div class="strategy-grid">
+                <!-- Strategy 1 -->
+                <div class="strategy-card active" onclick="selectStrategy('multi-bookmaker')">
+                    <div class="strategy-header">
+                        <div class="strategy-name">Multi-Bookmaker</div>
+                        <div class="risk-badge risk-low">0% Risk</div>
+                    </div>
+                    <p>Use multiple bookmakers for guaranteed profit</p>
+                    <div class="profit-range">₹800-2,500 Daily</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Beginner Friendly</span>
+                            <span>95%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 95%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy 2 -->
+                <div class="strategy-card" onclick="selectStrategy('bonus-stacking')">
+                    <div class="strategy-header">
+                        <div class="strategy-name">Bonus Stacking</div>
+                        <div class="risk-badge risk-low">0% Risk</div>
+                    </div>
+                    <p>Maximize welcome bonuses across platforms</p>
+                    <div class="profit-range">₹5,000-15,000 Weekly</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Beginner Friendly</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 90%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy 3 -->
+                <div class="strategy-card" onclick="selectStrategy('acca-insurance')">
+                    <div class="strategy-header">
+                        <div class="strategy-name">Acca Insurance</div>
+                        <div class="risk-badge risk-low">0% Risk</div>
+                    </div>
+                    <p>Use accumulator insurance for risk-free bets</p>
+                    <div class="profit-range">₹2,000-10,000 Weekly</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Medium Difficulty</span>
+                            <span>70%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy 4 -->
+                <div class="strategy-card" onclick="selectStrategy('scalp-arb-hybrid')">
+                    <div class="strategy-header">
+                        <div class="strategy-name">Scalp+Arb Hybrid</div>
+                        <div class="risk-badge risk-low">0% Risk</div>
+                    </div>
+                    <p>Combine scalping with arbitrage for max profits</p>
+                    <div class="profit-range">₹1,400-2,800 Daily</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Medium Difficulty</span>
+                            <span>75%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CALCULATOR SECTION -->
+        <div class="calculator-card">
+            <h2><i class="fas fa-calculator"></i> STRATEGY CALCULATOR</h2>
+            <p>Enter real odds from bookmakers to calculate guaranteed profits</p>
+            
+            <div id="strategy-calculator">
+                <!-- Multi-Bookmaker Calculator -->
+                <div id="multi-bookmaker-calc" class="strategy-calc">
+                    <h3><i class="fas fa-exchange-alt"></i> Multi-Bookmaker Arbitrage</h3>
+                    
+                    <div class="input-group">
+                        <label>Total Investment (₹)</label>
+                        <input type="number" id="investment-multi" value="10000" placeholder="Enter amount to invest">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="input-group">
+                            <label>1Win Odds</label>
+                            <input type="number" id="odds1-multi" value="2.10" step="0.01" placeholder="Odds from 1Win">
+                        </div>
+                        <div class="input-group">
+                            <label>1xBet Odds</label>
+                            <input type="number" id="odds2-multi" value="2.15" step="0.01" placeholder="Odds from 1xBet">
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="calculateMultiBookmaker()">
+                        <i class="fas fa-bolt"></i> CALCULATE GUARANTEED PROFIT
+                    </button>
+                </div>
+
+                <!-- Bonus Stacking Calculator -->
+                <div id="bonus-stacking-calc" class="strategy-calc" style="display: none;">
+                    <h3><i class="fas fa-gift"></i> Bonus Stacking Calculator</h3>
+                    
+                    <div class="input-group">
+                        <label>Number of Bookmaker Accounts</label>
+                        <input type="number" id="accounts-bonus" value="4" min="1" max="10">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Average Welcome Bonus (₹)</label>
+                        <input type="number" id="bonus-amount" value="5000" placeholder="Average bonus amount">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Wagering Requirement (Times)</label>
+                        <input type="number" id="wagering" value="5" step="0.1" placeholder="How many times to bet bonus">
+                    </div>
+
+                    <button class="btn" onclick="calculateBonusStacking()">
+                        <i class="fas fa-bolt"></i> CALCULATE BONUS PROFIT
+                    </button>
+                </div>
+
+                <!-- Results Display -->
+                <div id="strategy-result">
+                    <!-- Results will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- STRATEGY DETAILS -->
+        <div class="strategy-details">
+            <h3><i class="fas fa-info-circle"></i> STRATEGY GUIDE</h3>
+            <div id="strategy-guide">
+                <h4>Multi-Bookmaker Arbitrage Strategy</h4>
+                <p><strong>How it works:</strong> Place opposing bets on the same event across different bookmakers to guarantee profit regardless of outcome.</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+                    <div>
+                        <h5>✅ Advantages:</h5>
+                        <ul>
+                            <li>Zero risk when calculated correctly</li>
+                            <li>Works with any sport</li>
+                            <li>Quick profits (2-8%)</li>
+                            <li>Beginner friendly</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5>⚠️ Requirements:</h5>
+                        <ul>
+                            <li>Accounts with 2+ bookmakers</li>
+                            <li>Quick calculation tools</li>
+                            <li>Fast internet connection</li>
+                            <li>Basic understanding of odds</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="profit-display">
+                    <i class="fas fa-chart-line"></i> EXPECTED PROFIT: ₹500-2,000 PER DAY
+                </div>
+            </div>
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="calculator-card">
+            <h2><i class="fas fa-tachometer-alt"></i> DAILY PROGRESS TRACKER</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div class="result-box">
+                    <h4>Today's Target</h4>
+                    <div class="profit-range">₹1,000</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 45%"></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">45% Complete</div>
+                </div>
+
+                <div class="result-box">
+                    <h4>Weekly Profit</h4>
+                    <div class="profit-range">₹6,500</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 65%"></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">65% of ₹10k Target</div>
+                </div>
+
+                <div class="result-box">
+                    <h4>Monthly Goal</h4>
+                    <div class="profit-range">₹25,000</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 30%"></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">30% Complete</div>
+                </div>
+            </div>
+
+            <button class="btn btn-secondary">
+                <i class="fas fa-sync-alt"></i> UPDATE PROGRESS
+            </button>
+        </div>
+
+        <!-- QUICK START GUIDE -->
+        <div class="calculator-card">
+            <h2><i class="fas fa-rocket"></i> 30-DAY ACTION PLAN</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div class="result-box">
+                    <h4>Week 1: Foundation</h4>
+                    <p><strong>Strategy:</strong> Multi-Bookmaker</p>
+                    <p><strong>Target:</strong> ₹500-1,000 daily</p>
+                    <p><strong>Time:</strong> 2-3 hours</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 100%"></div>
+                    </div>
+                    <div style="text-align: center; color: var(--success); margin-top: 10px;">COMPLETED</div>
+                </div>
+
+                <div class="result-box">
+                    <h4>Week 2: Scaling</h4>
+                    <p><strong>Strategy:</strong> Bonus Stacking</p>
+                    <p><strong>Target:</strong> ₹1,000-2,000 daily</p>
+                    <p><strong>Time:</strong> 3-4 hours</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 50%"></div>
+                    </div>
+                    <div style="text-align: center; color: var(--warning); margin-top: 10px;">IN PROGRESS</div>
+                </div>
+
+                <div class="result-box">
+                    <h4>Week 3-4: Advanced</h4>
+                    <p><strong>Strategy:</strong> Hybrid Systems</p>
+                    <p><strong>Target:</strong> ₹2,000-3,000 daily</p>
+                    <p><strong>Time:</strong> 4-5 hours</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div style="text-align: center; color: #888; margin-top: 10px;">UPCOMING</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentStrategy = 'multi-bookmaker';
+        let dailyProfit = 0;
+        let totalProfit = 6500;
+
+        // Strategy selection
+        function selectStrategy(strategy) {
+            // Update active card
+            document.querySelectorAll('.strategy-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update calculator
+            document.querySelectorAll('.strategy-calc').forEach(calc => {
+                calc.style.display = 'none';
+            });
+            document.getElementById(`${strategy}-calc`).style.display = 'block';
+            
+            currentStrategy = strategy;
+            updateStrategyGuide(strategy);
+        }
+
+        // Update strategy guide
+        function updateStrategyGuide(strategy) {
+            const guide = document.getElementById('strategy-guide');
+            
+            const guides = {
+                'multi-bookmaker': `
+                    <h4>Multi-Bookmaker Arbitrage Strategy</h4>
+                    <p><strong>How it works:</strong> Place opposing bets on the same event across different bookmakers to guarantee profit regardless of outcome.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+                        <div>
+                            <h5>✅ Advantages:</h5>
+                            <ul>
+                                <li>Zero risk when calculated correctly</li>
+                                <li>Works with any sport</li>
+                                <li>Quick profits (2-8%)</li>
+                                <li>Beginner friendly</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5>⚠️ Requirements:</h5>
+                            <ul>
+                                <li>Accounts with 2+ bookmakers</li>
+                                <li>Quick calculation tools</li>
+                                <li>Fast internet connection</li>
+                                <li>Basic understanding of odds</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="profit-display">
+                        <i class="fas fa-chart-line"></i> EXPECTED PROFIT: ₹800-2,500 PER DAY
+                    </div>
+                `,
+                
+                'bonus-stacking': `
+                    <h4>Bonus Stacking Strategy</h4>
+                    <p><strong>How it works:</strong> Use welcome bonuses from multiple bookmakers to create risk-free betting opportunities.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+                        <div>
+                            <h5>✅ Advantages:</h5>
+                            <ul>
+                                <li>Highest profit potential</li>
+                                <li>Completely risk-free</li>
+                                <li>One-time large profits</li>
+                                <li>Beginner friendly</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5>⚠️ Requirements:</h5>
+                            <ul>
+                                <li>Multiple new accounts</li>
+                                <li>Different email addresses</li>
+                                <li>Understanding of bonus terms</li>
+                                <li>Proper documentation for verification</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="profit-display">
+                        <i class="fas fa-chart-line"></i> EXPECTED PROFIT: ₹5,000-15,000 PER WEEK
+                    </div>
+                `,
+                
+                'acca-insurance': `
+                    <h4>Accumulator Insurance Strategy</h4>
+                    <p><strong>How it works:</strong> Use accumulator insurance offers where bookmakers refund stakes if one leg fails.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+                        <div>
+                            <h5>✅ Advantages:</h5>
+                            <ul>
+                                <li>High returns on successful bets</li>
+                                <li>Insurance covers losses</li>
+                                <li>Works well with football</li>
+                                <li>Medium difficulty</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5>⚠️ Requirements:</h5>
+                            <ul>
+                                <li>Understanding of accumulator bets</li>
+                                <li>Knowledge of insurance terms</li>
+                                <li>Proper selection of matches</li>
+                                <li>Multiple bookmaker accounts</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="profit-display">
+                        <i class="fas fa-chart-line"></i> EXPECTED PROFIT: ₹2,000-10,000 PER WEEK
+                    </div>
+                `,
+                
+                'scalp-arb-hybrid': `
+                    <h4>Scalping + Arbitrage Hybrid Strategy</h4>
+                    <p><strong>How it works:</strong> Combine quick scalping (fast odds movement) with traditional arbitrage for maximum profits.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+                        <div>
+                            <h5>✅ Advantages:</h5>
+                            <ul>
+                                <li>Highest daily profit potential</li>
+                                <li>Works in live/match situations</li>
+                                <li>Combines two proven methods</li>
+                                <li>Medium difficulty</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5>⚠️ Requirements:</h5>
+                            <ul>
+                                <li>Fast execution speed</li>
+                                <li>Multiple bookmaker accounts</li>
+                                <li>Live streaming access</li>
+                                <li>Experience with both strategies</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="profit-display">
+                        <i class="fas fa-chart-line"></i> EXPECTED PROFIT: ₹1,400-2,800 PER DAY
+                    </div>
+                `
+            };
+            
+            guide.innerHTML = guides[strategy] || guides['multi-bookmaker'];
+        }
+
+        // Multi-Bookmaker Calculation
+        function calculateMultiBookmaker() {
+            const investment = parseFloat(document.getElementById('investment-multi').value);
+            const odds1 = parseFloat(document.getElementById('odds1-multi').value);
+            const odds2 = parseFloat(document.getElementById('odds2-multi').value);
+            
+            // Arbitrage calculation
+            const arbitragePercent = (1/odds1 + 1/odds2) * 100;
+            const profitPercent = 100 - arbitragePercent;
+            
+            // Stake calculation
+            const stake1 = (investment / odds1) / (1/odds1 + 1/odds2);
+            const stake2 = (investment / odds2) / (1/odds1 + 1/odds2);
+            
+            // Potential returns
+            const return1 = stake1 * odds1;
+            const return2 = stake2 * odds2;
+            
+            // Guaranteed profit
+            const guaranteedProfit = Math.min(return1, return2) - investment;
+            
+            let resultHTML = '';
+            
+            if (profitPercent > 0) {
+                resultHTML = `
+                    <div class="profit-display">
+                        <h3><i class="fas fa-check-circle"></i> ARBITRAGE FOUND!</h3>
+                        <p>Guaranteed Profit: <strong>₹${guaranteedProfit.toFixed(2)} (${profitPercent.toFixed(2)}%)</strong></p>
+                    </div>
+                    
+                    <div class="result-box">
+                        <h4><i class="fas fa-rupee-sign"></i> STAKE DISTRIBUTION:</h4>
+                        <p><strong>1Win:</strong> ₹${stake1.toFixed(2)} on Odds ${odds1}</p>
+                        <p><strong>1xBet:</strong> ₹${stake2.toFixed(2)} on Odds ${odds2}</p>
+                        <p><strong>Total Investment:</strong> ₹${investment.toFixed(2)}</p>
+                    </div>
+                    
+                    <div class="result-box">
+                        <h4><i class="fas fa-chart-line"></i> POTENTIAL RETURNS:</h4>
+                        <p>If Outcome 1 wins: <strong>₹${return1.toFixed(2)}</strong> (Profit: ₹${(return1 - investment).toFixed(2)})</p>
+                        <p>If Outcome 2 wins: <strong>₹${return2.toFixed(2)}</strong> (Profit: ₹${(return2 - investment).toFixed(2)})</p>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-save"></i> SAVE THIS CALCULATION
+                        </button>
+                    </div>
+                `;
+            } else {
+                resultHTML = `
+                    <div class="loss-display">
+                        <h3><i class="fas fa-times-circle"></i> NO ARBITRAGE OPPORTUNITY</h3>
+                        <p>Market Efficiency: ${arbitragePercent.toFixed(2)}%</p>
+                        <p>Try different bookmakers or wait for odds to change</p>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('strategy-result').innerHTML = resultHTML;
+        }
+
+        // Bonus Stacking Calculation
+        function calculateBonusStacking() {
+            const accounts = parseInt(document.getElementById('accounts-bonus').value);
+            const bonusAmount = parseFloat(document.getElementById('bonus-amount').value);
+            const wagering = parseFloat(document.getElementById('wagering').value);
+            
+            // Calculation
+            const totalBonus = accounts * bonusAmount;
+            const requiredTurnover = totalBonus * wagering;
+            const expectedProfit = totalBonus * 0.85; // 85% conversion rate
+            
+            const resultHTML = `
+                <div class="profit-display">
+                    <h3><i class="fas fa-gift"></i> BONUS STACKING PROFIT</h3>
+                    <p>Expected Profit: <strong>₹${expectedProfit.toFixed(2)}</strong></p>
+                </div>
+                
+                <div class="result-box">
+                    <h4><i class="fas fa-calculator"></i> CALCULATION DETAILS:</h4>
+                    <p><strong>Total Bonus Amount:</strong> ₹${totalBonus.toFixed(2)}</p>
+                    <p><strong>Required Turnover:</strong> ₹${requiredTurnover.toFixed(2)}</p>
+                    <p><strong>Expected Conversion Rate:</strong> 85%</p>
+                    <p><strong>Estimated Time:</strong> ${accounts * 2} hours</p>
+                </div>
+                
+                <div class="result-box">
+                    <h4><i class="fas fa-lightbulb"></i> RECOMMENDED BOOKMAKERS:</h4>
+                    <p>1. 1Win (500% bonus up to ₹50,000)</p>
+                    <p>2. 1xBet (400% bonus up to ₹40,000)</p>
+                    <p>3. Parimatch (₹10,000 welcome bonus)</p>
+                    <p>4. Rajabets (200% bonus up to ₹20,000)</p>
+                </div>
+            `;
+            
+            document.getElementById('strategy-result').innerHTML = resultHTML;
+        }
+
+        // Initialize
+        window.addEventListener('load', function() {
+            updateStrategyGuide('multi-bookmaker');
+        });
+    </script>
+</body>
+</html>
