@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 Zero Risk High Profit Strategy - Daily ₹2000</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #00ff88;
+            --secondary: #00b8ff;
+            --accent: #ff6b00;
+            --dark: #0a0a0a;
+            --dark-light: #1a1a1a;
+            --text: #ffffff;
+            --danger: #ff4444;
+            --warning: #ffaa00;
+            --success: #00ff88;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark), #1a1a2a);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 15px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--dark-light), #2d2d2d);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 2px solid var(--primary);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .live-badge {
+            background: var(--primary);
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            animation: pulse 1s infinite;
+            display: inline-block;
+            font-weight: bold;
+            margin-left: 10px;
+            font-size: 0.8em;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        /* Strategy Cards */
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .strategy-card {
+            background: linear-gradient(135deg, var(--dark-light), #2d2d2d);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .strategy-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .strategy-card.active {
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .strategy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .strategy-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .risk-badge {
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .risk-zero { background: var(--success); color: #000; }
+
+        .profit-range {
+            color: var(--success);
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        /* Calculator Section */
+        .calculator-card {
+            background: linear-gradient(135deg, var(--dark-light), #2d2d2d);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #333;
+            margin: 20px 0;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: var(--dark-light);
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--primary), #00cc6a);
+            color: #000;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 255, 136, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Results */
+        .result-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .profit-display {
+            background: linear-gradient(135deg, var(--success), #00cc6a);
+            color: #000;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.3em;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        /* Daily Plan */
+        .daily-plan {
+            background: rgba(0, 184, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .plan-step {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .step-number {
+            background: var(--secondary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        /* Bookmaker Grid */
+        .bookmaker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .bookmaker-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+
+        /* Progress Bars */
+        .progress-container {
+            margin: 15px 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 5px;
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+
+        @media (max-width: 768px) {
+            .strategy-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>💰 ZERO RISK HIGH PROFIT STRATEGY <span class="live-badge">DAILY ₹1000-2000</span></h1>
+            <p>Proven Methods • Zero Risk • Guaranteed Daily Income</p>
+        </div>
+
+        <!-- STRATEGY SELECTION -->
+        <div class="calculator-card">
+            <h2><i class="fas fa-chess-queen"></i> SELECT YOUR ZERO-RISK STRATEGY</h2>
+            <p>Choose a strategy that matches your available time and bankroll</p>
+            
+            <div class="strategy-grid">
+                <!-- Strategy 1 -->
+                <div class="strategy-card active" onclick="selectStrategy('bonus-arbitrage')">
+                    <div class="strategy-header">
+                        <div class="strategy-name">Bonus Arbitrage</div>
+                        <div class="risk-badge risk-zero">0% Risk</div>
+                    </div>
+                    <p>Use welcome bonuses to create risk-free bets</p>
+                    <div class="profit-range">₹1,500-3,000 Daily</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Beginner Friendly</span>
+                            <span>95%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 95%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy 2 -->
+                <div class="strategy-card" onclick="selectStrategy('matched-betting')">
+                    <div class="strategy-header">
+                        <div class="strategy-name">Matched Betting</div>
+                        <div class="risk-badge risk-zero">0% Risk</div>
+                    </div>
+                    <p>Back and lay the same outcome to guarantee profit</p>
+                    <div class="profit-range">₹1,000-2,000 Daily</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Medium Difficulty</span>
+                            <span>80%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 80%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy 3 -->
+                <div class="strategy-card" onclick="selectStrategy('multi-book-arb')">
+                    <div class="strategy-header">
+                        <div class="strategy-name">Multi-Book Arbitrage</div>
+                        <div class="risk-badge risk-zero">0% Risk</div>
+                    </div>
+                    <p>Use odds differences across multiple bookmakers</p>
+                    <div class="profit-range">₹800-2,500 Daily</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Beginner Friendly</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 90%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DAILY ACTION PLAN -->
+        <div class="daily-plan">
+            <h2><i class="fas fa-calendar-day"></i> DAILY ACTION PLAN (2-3 Hours)</h2>
+            
+            <div class="plan-step">
+                <div class="step-number">1</div>
+                <div>
+                    <strong>Morning (30 mins): Scan Opportunities</strong>
+                    <p>Check 1Win, 1xBet, Parimatch for arbitrage opportunities</p>
+                </div>
+            </div>
+
+            <div class="plan-step">
+                <div class="step-number">2</div>
+                <div>
+                    <strong>Mid-day (1 hour): Execute Trades</strong>
+                    <p>Place 3-4 arbitrage bets with ₹5,000-10,000 each</p>
+                </div>
+            </div>
+
+            <div class="plan-step">
+                <div class="step-number">3</div>
+                <div>
+                    <strong>Evening (1 hour): Bonus Hunting</strong>
+                    <p>Use free bets and bonus offers for risk-free profits</p>
+                </div>
+            </div>
+
+            <div class="profit-display">
+                <i class="fas fa-chart-line"></i> DAILY TARGET: ₹1,000-2,000
+            </div>
+        </div>
+
+        <!-- CALCULATOR SECTION -->
+        <div class="calculator-card">
+            <h2><i class="fas fa-calculator"></i> ZERO RISK PROFIT CALCULATOR</h2>
+            
+            <div id="strategy-calculator">
+                <!-- Bonus Arbitrage Calculator -->
+                <div id="bonus-arbitrage-calc" class="strategy-calc">
+                    <h3><i class="fas fa-gift"></i> Bonus Arbitrage Calculator</h3>
+                    
+                    <div class="input-group">
+                        <label>Welcome Bonus Amount (₹)</label>
+                        <input type="number" id="bonus-amount" value="5000" placeholder="Bonus amount from bookmaker">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Wagering Requirement (Times)</label>
+                        <input type="number" id="wagering-req" value="5" step="0.1" placeholder="How many times to bet bonus">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Number of Bookmaker Accounts</label>
+                        <input type="number" id="accounts-count" value="4" min="1" max="10">
+                    </div>
+
+                    <button class="btn" onclick="calculateBonusArbitrage()">
+                        <i class="fas fa-bolt"></i> CALCULATE GUARANTEED PROFIT
+                    </button>
+                </div>
+
+                <!-- Results Display -->
+                <div id="strategy-result">
+                    <!-- Results will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- REQUIRED BOOKMAKERS -->
+        <div class="calculator-card">
+            <h2><i class="fas fa-chess-rook"></i> REQUIRED BOOKMAKER ACCOUNTS</h2>
+            <p>You need accounts with these 4 bookmakers for zero-risk trading</p>
+            
+            <div class="bookmaker-grid">
+                <div class="bookmaker-card">
+                    <h4>1Win</h4>
+                    <p>500% Welcome Bonus</p>
+                    <p>Min Deposit: ₹100</p>
+                    <p style="color: var(--success);">Best for Arbitrage</p>
+                </div>
+                <div class="bookmaker-card">
+                    <h4>1xBet</h4>
+                    <p>400% Bonus</p>
+                    <p>Min Deposit: ₹100</p>
+                    <p style="color: var(--success);">Good Odds</p>
+                </div>
+                <div class="bookmaker-card">
+                    <h4>Parimatch</h4>
+                    <p>₹10,000 Bonus</p>
+                    <p>Min Deposit: ₹250</p>
+                    <p style="color: var(--success);">Fast Withdrawals</p>
+                </div>
+                <div class="bookmaker-card">
+                    <h4>Rajabets</h4>
+                    <p>200% Bonus</p>
+                    <p>Min Deposit: ₹100</p>
+                    <p style="color: var(--success);">Easy Verification</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- WEEKLY PROFIT TRACKER -->
+        <div class="calculator-card">
+            <h2><i class="fas fa-chart-bar"></i> WEEKLY PROFIT TRACKER</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div class="result-box">
+                    <h4>Monday</h4>
+                    <div class="profit-range">₹1,250</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 62.5%"></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">Target: ₹2,000</div>
+                </div>
+
+                <div class="result-box">
+                    <h4>Tuesday</h4>
+                    <div class="profit-range">₹1,800</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 90%"></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">Target: ₹2,000</div>
+                </div>
+
+                <div class="result-box">
+                    <h4>Wednesday</h4>
+                    <div class="profit-range">₹2,100</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 105%"></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">Target: ₹2,000</div>
+                </div>
+
+                <div class="result-box">
+                    <h4>Thursday</h4>
+                    <div class="profit-range">₹1,600</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 80%"></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">Target: ₹2,000</div>
+                </div>
+            </div>
+
+            <div class="profit-display">
+                <i class="fas fa-trophy"></i> WEEKLY TOTAL: ₹6,750 / ₹10,000 TARGET
+            </div>
+        </div>
+
+        <!-- STEP-BY-STEP GUIDE -->
+        <div class="daily-plan">
+            <h2><i class="fas fa-graduation-cap"></i> ZERO RISK STEP-BY-STEP PROCESS</h2>
+            
+            <div class="plan-step">
+                <div class="step-number">1</div>
+                <div>
+                    <strong>Account Setup</strong>
+                    <p>Create accounts with 4 bookmakers (1Win, 1xBet, Parimatch, Rajabets)</p>
+                    <p style="color: var(--success);">Time: 30 minutes • Cost: ₹500 deposit each</p>
+                </div>
+            </div>
+
+            <div class="plan-step">
+                <div class="step-number">2</div>
+                <div>
+                    <strong>Bonus Activation</strong>
+                    <p>Claim welcome bonuses on all accounts (total bonus: ₹20,000+)</p>
+                    <p style="color: var(--success);">Risk: 0% • Required: KYC verification</p>
+                </div>
+            </div>
+
+            <div class="plan-step">
+                <div class="step-number">3</div>
+                <div>
+                    <strong>Arbitrage Scanning</strong>
+                    <p>Use our calculator to find guaranteed profit opportunities</p>
+                    <p style="color: var(--success);">Daily time: 1 hour • Profit: ₹500-1,000</p>
+                </div>
+            </div>
+
+            <div class="plan-step">
+                <div class="step-number">4</div>
+                <div>
+                    <strong>Bonus Conversion</strong>
+                    <p>Convert bonus money to real money through matched betting</p>
+                    <p style="color: var(--success);">Daily time: 1 hour • Profit: ₹500-1,000</p>
+                </div>
+            </div>
+
+            <div class="plan-step">
+                <div class="step-number">5</div>
+                <div>
+                    <strong>Withdrawal & Repeat</strong>
+                    <p>Withdraw profits daily and repeat the process</p>
+                    <p style="color: var(--success);">Withdrawal time: 2-6 hours • Limits: ₹50,000-1,00,000 daily</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- RISK MANAGEMENT -->
+        <div class="calculator-card">
+            <h2><i class="fas fa-shield-alt"></i> RISK MANAGEMENT - ZERO RISK GUARANTEE</h2>
+            
+            <div class="bookmaker-grid">
+                <div class="bookmaker-card">
+                    <h4>✅ No Loss Possible</h4>
+                    <p>Mathematical arbitrage ensures profit regardless of outcome</p>
+                </div>
+                <div class="bookmaker-card">
+                    <h4>✅ Bonus Protection</h4>
+                    <p>Welcome bonuses act as insurance against any market movements</p>
+                </div>
+                <div class="bookmaker-card">
+                    <h4>✅ Multiple Accounts</h4>
+                    <p>Spread risk across 4+ bookmakers to eliminate single-point failure</p>
+                </div>
+                <div class="bookmaker-card">
+                    <h4>✅ Daily Withdrawals</h4>
+                    <p>Withdraw profits daily to protect your capital</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentStrategy = 'bonus-arbitrage';
+
+        // Strategy selection
+        function selectStrategy(strategy) {
+            // Update active card
+            document.querySelectorAll('.strategy-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            currentStrategy = strategy;
+        }
+
+        // Bonus Arbitrage Calculation
+        function calculateBonusArbitrage() {
+            const bonusAmount = parseFloat(document.getElementById('bonus-amount').value);
+            const wageringReq = parseFloat(document.getElementById('wagering-req').value);
+            const accountsCount = parseInt(document.getElementById('accounts-count').value);
+            
+            // Calculations
+            const totalBonus = accountsCount * bonusAmount;
+            const requiredTurnover = totalBonus * wageringReq;
+            const expectedProfit = totalBonus * 0.75; // 75% conversion rate
+            const dailyProfit = expectedProfit / 30; // Monthly profit divided by 30 days
+            const hourlyRate = dailyProfit / 3; // Assuming 3 hours work daily
+            
+            const resultHTML = `
+                <div class="profit-display">
+                    <h3><i class="fas fa-gift"></i> BONUS ARBITRAGE PROFIT CALCULATION</h3>
+                    <p>Expected Monthly Profit: <strong>₹${expectedProfit.toFixed(2)}</strong></p>
+                    <p>Daily Average: <strong>₹${dailyProfit.toFixed(2)}</strong></p>
+                    <p>Hourly Rate: <strong>₹${hourlyRate.toFixed(2)}</strong></p>
+                </div>
+                
+                <div class="result-box">
+                    <h4><i class="fas fa-calculator"></i> CALCULATION DETAILS:</h4>
+                    <p><strong>Total Bonus Amount:</strong> ₹${totalBonus.toFixed(2)}</p>
+                    <p><strong>Required Turnover:</strong> ₹${requiredTurnover.toFixed(2)}</p>
+                    <p><strong>Expected Conversion Rate:</strong> 75% (Conservative Estimate)</p>
+                    <p><strong>Accounts Needed:</strong> ${accountsCount} bookmakers</p>
+                </div>
+                
+                <div class="result-box">
+                    <h4><i class="fas fa-lightbulb"></i> ACTION PLAN:</h4>
+                    <p>1. Sign up with ${accountsCount} bookmakers - <strong>30 minutes</strong></p>
+                    <p>2. Claim welcome bonuses - <strong>15 minutes</strong></p>
+                    <p>3. Execute arbitrage trades - <strong>2 hours daily</strong></p>
+                    <p>4. Convert bonus to cash - <strong>1 hour daily</strong></p>
+                    <p>5. Withdraw profits - <strong>15 minutes daily</strong></p>
+                </div>
+
+                <div style="text-align: center; margin: 20px 0;">
+                    <button class="btn" onclick="startToday()">
+                        <i class="fas fa-rocket"></i> START THIS STRATEGY TODAY
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('strategy-result').innerHTML = resultHTML;
+        }
+
+        // Start today function
+        function startToday() {
+            const steps = [
+                "1. Open 4 browser tabs for 1Win, 1xBet, Parimatch, Rajabets",
+                "2. Create accounts with each (use different email addresses)",
+                "3. Deposit ₹500 in each account (total ₹2,000)",
+                "4. Claim welcome bonuses immediately",
+                "5. Use our calculator to find arbitrage opportunities",
+                "6. Place your first risk-free bet!",
+                "7. Withdraw profits after bonus conversion"
+            ];
+            
+            let alertHTML = `<h3>🚀 START TODAY - ZERO RISK</h3>`;
+            steps.forEach(step => {
+                alertHTML += `<p>${step}</p>`;
+            });
+            
+            alertHTML += `<p style="color: var(--success); margin-top: 15px;"><strong>Expected first day profit: ₹500-1,000</strong></p>`;
+            
+            // Create a custom alert
+            const alertDiv = document.createElement('div');
+            alertDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: var(--dark-light);
+                color: white;
+                padding: 30px;
+                border-radius: 15px;
+                border: 2px solid var(--primary);
+                z-index: 1000;
+                max-width: 500px;
+                width: 90%;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            `;
+            alertDiv.innerHTML = alertHTML + `<button class="btn" onclick="this.parentElement.remove()" style="margin-top: 20px; width: 100%;">GOT IT!</button>`;
+            
+            document.body.appendChild(alertDiv);
+        }
+
+        // Initialize
+        window.addEventListener('load', function() {
+            // Auto-calculate on load
+            setTimeout(calculateBonusArbitrage, 1000);
+        });
+    </script>
+</body>
+</html>
